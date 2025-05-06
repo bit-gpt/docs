@@ -1,0 +1,56 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "h402",
+  "colors": {
+    "primary": "#9A3412",
+    "light": "#EA580C",
+    "dark": "#9A3412"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "groups": [
+          {
+            "group": "HTTP 402",
+            "pages": [
+              "basics",
+              "contributing",
+              "roadmap"
+            ]
+          },
+          {
+            "group": "Quickstart",
+            "pages": [
+              "quickstart/businesses",
+              "quickstart/consumers"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/BitGPTnetwork",
+      "github": "https://github.com/bit-gpt/h402"
+    },
+    "links": [
+      {
+        "header": "example",
+        "items": [
+          {
+            "label": "example",
+            "href": "https://example.com"
+          }
+        ]
+      }
+    ]
+  }
+}
