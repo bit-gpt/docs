@@ -1,0 +1,61 @@
+---
+title: "Welcome to h402"
+sidebarTitle: "Welcome"
+---
+
+<Info>
+  The protocol is fully [open source](https://github.com/bit-gpt/h402) and under
+  active development.
+</Info>
+
+**h402 is an open, HTTP-compatible protocol that enables stateless machine-to-machine payments.**
+
+Thirty-five years after Tim Berners-Lee set aside the 402 Payment Required response code, the web still lacks a native, programmable unit of value. h402 aims to close this gap by providing a thin, header-based payment primitive that integrates directly into any HTTP interaction.
+
+---
+
+## Overview
+
+h402 repurposes the unused `402 Payment Required` HTTP status code to introduce a simple and interoperable payment negotiation mechanism between clients and services. It enables:
+
+- Machine-to-machine payments using native blockchain assets
+- Service monetization without centralized payment gateways
+- Stateless, cryptographically verifiable interactions
+- Cross-chain and token-agnostic design
+
+Any HTTP-capable agent or service can adopt h402 to define access requirements, request payment and verify them using our protocol.
+
+---
+
+## Key Capabilities
+
+- **Chain-Plural**: The protocol treats multiple settlement networks (EVM chains, Solana and soon many others) as first-class options.
+- **HTTP-Native**: Seamless integration with existing web infrastructure through standard headers and status codes.
+- **Extensible**: Support for new payment schemes, compliance requirements, and future network integrations.
+- **Production-Ready**: Built for real-world deployment with comprehensive tooling and facilitator support.
+
+<Note>
+  While clients operate in a completely stateless manner, the Facilitator
+  maintains state for transaction verification and settlement.
+</Note>
+
+---
+
+## Use Cases
+
+h402 enables a new market layer for code, including:
+
+- **Instant-Settlement Service Calls**: LLM inference, real-time market data, per-frame video analytics
+- **Compute & Storage Markets**: GPU spot markets, elastic storage, DePIN rewards
+- **Context & Content on Demand**: Per-document legal archives, premium content, scientific datasets
+- **Device-to-Device Commerce**: EV charging, factory automation, logistics coordination
+
+---
+
+## Next Steps
+
+This section of the documentation provides everything you need to understand, implement and integrate the h402 protocol:
+
+- **[Core Concepts](/h402/core)** – Protocol architecture and payment lifecycle
+- **[Quickstart Guide](/h402/quickstart)** – Implementation guide with SDK examples
+- **[Integration Examples](/h402/examples)** – Real-world patterns and use cases

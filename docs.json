@@ -1,34 +1,50 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "maple",
-  "name": "h402",
+  "name": "BitGPT Docs",
   "colors": {
-    "primary": "#9A3412",
-    "light": "#EA580C",
-    "dark": "#9A3412"
+    "primary": "#1E54BF",
+    "light": "#1E54BF",
+    "dark": "#1E54BF"
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#131316"
+    }
   },
   "favicon": "/favicon.svg",
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Email Us",
+      "href": "mailto:support@bitgpt.xyz"
+    }
+  },
   "navigation": {
-    "languages": [
+    "tabs": [
       {
-        "language": "en",
-        "groups": [
-          {
-            "group": "HTTP 402",
-            "pages": [
-              "basics",
-              "contributing",
-              "roadmap"
-            ]
-          },
-          {
-            "group": "Quickstart",
-            "pages": [
-              "quickstart/businesses",
-              "quickstart/consumers"
-            ]
-          }
+        "tab": "Home",
+        "icon": "house",
+        "pages": ["home/welcome", "home/about"]
+      },
+      {
+        "tab": "h402 Protocol",
+        "icon": "bitcoin",
+        "pages": [
+          "h402/welcome",
+          "h402/core",
+          "h402/quickstart",
+          "h402/examples",
+          "h402/facilitator",
+          "h402/facilitator-api",
+          "h402/faq"
         ]
+      },
+      {
+        "tab": "Platform API",
+        "icon": "server",
+        "pages": ["platform-api/welcome"]
       }
     ]
   },
@@ -39,18 +55,8 @@
   "footer": {
     "socials": {
       "x": "https://x.com/BitGPTnetwork",
-      "github": "https://github.com/bit-gpt/h402"
-    },
-    "links": [
-      {
-        "header": "example",
-        "items": [
-          {
-            "label": "example",
-            "href": "https://example.com"
-          }
-        ]
-      }
-    ]
+      "github": "https://github.com/bit-gpt/h402",
+      "discord": "https://discord.gg/5XXBz5S2qe"
+    }
   }
 }

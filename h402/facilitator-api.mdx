@@ -1,0 +1,146 @@
+---
+title: "Facilitator API"
+---
+
+The Facilitator API provides endpoints for payment verification, settlement and status checking. All endpoints accept and return JSON data.
+
+## API Endpoints
+
+### Payment Verification
+
+<Accordion title="POST /api/verify">
+Verifies a payment proof across supported chains.
+
+**Request**
+
+```json
+{
+  "payload": "base64EncodedPayloadString", // Base64 encoded payment payload
+  "paymentRequirements": {
+    "namespace": "evm",
+    "tokenAddress": "0x...", // Token address or special value for native tokens
+    "tokenType": "ERC20", // Optional
+    "tokenDecimals": 18, // Optional
+    "tokenSymbol": "ETH", // Optional
+    "amountRequired": "1000000000000000000",
+    "amountRequiredFormat": "smallestUnit",
+    "payToAddress": "0x...",
+    "networkId": "1", // Chain ID for EVM networks
+    "description": "Payment for service X", // Optional
+    "resource": "resource-id", // Optional
+    "scheme": "exact", // Optional
+    "mimeType": "application/json", // Optional
+    "outputSchema": {}, // Optional
+    "estimatedProcessingTime": 30, // Optional, in seconds
+    "extra": {}, // Optional additional data
+    "maxAmountRequired": "2000000000000000000", // Optional
+    "requiredDeadlineSeconds": 3600 // Optional
+  }
+}
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "isValid": true,
+    "type": "payload", // or "transaction"
+    "txHash": "" // Optional
+  }
+}
+```
+
+</Accordion>
+
+### Settlement
+
+<Accordion title="POST /api/settle">
+Initiates or completes the settlement process.
+
+**Request**
+
+```json
+{
+  "payload": "base64EncodedPayloadString", // Base64 encoded payment payload
+  "paymentRequirements": {
+    "namespace": "evm",
+    "tokenAddress": "0x...", // Token address or special value for native tokens
+    "tokenType": "ERC20", // Optional
+    "tokenDecimals": 18, // Optional
+    "tokenSymbol": "ETH", // Optional
+    "amountRequired": "1000000000000000000",
+    "amountRequiredFormat": "smallestUnit",
+    "payToAddress": "0x...",
+    "networkId": "1", // Chain ID for EVM networks
+    "description": "Payment for service X", // Optional
+    "resource": "resource-id", // Optional
+    "scheme": "exact", // Optional
+    "mimeType": "application/json", // Optional
+    "outputSchema": {}, // Optional
+    "estimatedProcessingTime": 30, // Optional, in seconds
+    "extra": {}, // Optional additional data
+    "maxAmountRequired": "2000000000000000000", // Optional
+    "requiredDeadlineSeconds": 3600 // Optional
+  }
+}
+```
+
+**Response**
+
+```json
+{
+  "data": {
+    "success": "true",
+    "txHash": "0xabc123",
+    "chainId": "", // Optional
+    "transaction": "", // Optional
+    "network": "", // Optional
+    "payer": "" // Optional
+  }
+}
+```
+
+</Accordion>
+
+### Health Check
+
+<Accordion title="GET /health">
+  Returns a 200 if the Facilitator is run.
+</Accordion>
+
+## Admin Endpoints
+
+Dedicated administrative routes for Facilitator management
+
+### Authentication
+
+For admin endpoints, include an API token in the Authorization header:
+
+```bash
+Authorization: Bearer your_admin_token_here
+```
+
+### Manual Backup
+
+<Accordion title="POST /backup">
+  Initiates a backup of the database manually
+</Accordion>
+
+## Error Handling
+
+All API endpoints use standard HTTP status codes and return errors in the following format:
+
+```json
+{
+  "error": "Server error during verification",
+  "details": "The provided signature is invalid"
+}
+```
+
+Common error codes:
+
+- `400`: Bad Request
+- `401`: Unauthorized
+- `404`: Not Found
+- `500`: Internal Server Error

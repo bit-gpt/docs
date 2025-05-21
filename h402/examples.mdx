@@ -1,0 +1,185 @@
+---
+title: "Integration Examples"
+sidebarTitle: "Examples"
+---
+
+These examples demonstrate how to apply h402 in common use cases. Each scenario shows how to wrap a service with pay-per-request logic using the `@bit-gpt/h402` SDK.
+
+---
+
+## Example 1: Express Image Generation API
+
+A simple HTTP endpoint that generates images using OpenAI's API. Access is restricted via h402, requiring clients to pay before receiving results.
+
+```typescript
+import express from "express";
+import { h402ExpressMiddleware } from "@bit-gpt/h402/middleware";
+import { PaymentRequirements } from "@bit-gpt/h402/types";
+import { OpenAI } from "openai";
+
+const app = express();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+app.use(express.json());
+
+// Define payment requirements
+const paymentRequirements: PaymentRequirements = {
+  namespace: "eip155",
+  tokenAddress: "0xUSDC_CONTRACT_ADDRESS",
+  amountRequired: "0.5",
+  amountRequiredFormat: "humanReadable",
+  payToAddress: "0xYourWalletAddress",
+  networkId: "1", // Ethereum mainnet
+};
+
+// Setup the protected route with h402 middleware
+app.use(
+  h402ExpressMiddleware({
+    routes: {
+      "/generate-image": {
+        paymentRequirements,
+      },
+    },
+  })
+);
+
+// Handle image generation
+app.post("/generate-image", async (req, res) => {
+  const { prompt } = req.body;
+  try {
+    const image = await openai.images.generate({
+      prompt,
+      n: 1,
+      size: "512x512",
+    });
+    res.json({ imageUrl: image.data[0].url });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(3000);
+```
+
+This model allows developers to charge per image generation using on-chain payments without managing users or sessions.
+
+---
+
+## Example 2: Express RPC API
+
+Wrap a standard blockchain JSON-RPC endpoint with h402, monetizing access to operations like `getBlockHeight` or `getBalance`.
+
+```typescript
+import express from "express";
+import { h402ExpressMiddleware } from "@bit-gpt/h402/middleware";
+import { PaymentRequirements } from "@bit-gpt/h402/types";
+import { ethers } from "ethers";
+
+const app = express();
+const provider = new ethers.JsonRpcProvider(
+  "https://mainnet.infura.io/v3/YOUR_KEY"
+);
+
+app.use(express.json());
+
+// Define payment requirements
+const paymentRequirements: PaymentRequirements = {
+  namespace: "eip155",
+  tokenAddress: null, // Use native ETH
+  amountRequired: "0.001",
+  amountRequiredFormat: "humanReadable",
+  payToAddress: "0xYourWalletAddress",
+  networkId: "1", // Ethereum mainnet
+};
+
+// Setup the protected route with h402 middleware
+app.use(
+  h402ExpressMiddleware({
+    routes: {
+      "/rpc": {
+        paymentRequirements,
+      },
+    },
+  })
+);
+
+// Handle RPC requests
+app.post("/rpc", async (req, res) => {
+  const { method, params } = req.body;
+  try {
+    const result = await provider.send(method, params);
+    res.json({ result });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(3001);
+```
+
+This model turns any stateless RPC server into a paid API endpoint without requiring user accounts or billing infrastructure.
+
+---
+
+## Example 3: React Client Integration
+
+Example of a React component that handles h402 payments:
+
+```typescript
+import { useState } from "react";
+import { createPayment } from "@bit-gpt/h402";
+import { PaymentRequirements } from "@bit-gpt/h402/types";
+
+// Define payment requirements (matching server-side)
+const paymentRequirements: PaymentRequirements = {
+  namespace: "eip155",
+  tokenAddress: "0xUSDC_CONTRACT_ADDRESS",
+  amountRequired: "0.5",
+  amountRequiredFormat: "humanReadable",
+  payToAddress: "0xServiceWalletAddress",
+  networkId: "1",
+};
+
+export function ImageGeneratorPaywall() {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const walletClient = /* Your wallet instance */;
+
+  async function handlePayment() {
+    setIsProcessing(true);
+    try {
+      // Create payment header
+      const paymentHeader = await createPayment(paymentRequirements, {
+        evmClient: walletClient
+      });
+
+      // Call the API with payment
+      const response = await fetch("/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-PAYMENT": paymentHeader,
+        },
+        body: JSON.stringify({
+          prompt: "A beautiful sunset",
+        }),
+      });
+
+      const data = await response.json();
+      setImageUrl(data.imageUrl);
+    } catch (error) {
+      console.error("Payment failed:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  }
+
+  return imageUrl ? (
+    <img src={imageUrl} alt="Generated" />
+  ) : (
+    <button onClick={handlePayment} disabled={isProcessing}>
+      Generate Image (0.5 USDC)
+    </button>
+  );
+}
+```

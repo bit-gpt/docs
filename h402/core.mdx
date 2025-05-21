@@ -1,0 +1,63 @@
+---
+title: "Core Concepts"
+---
+
+## Payment Lifecycle
+
+The h402 handshake distills every payment into five deterministic steps. Each step yields a machine-readable artifact that survives retries, failovers or audits:
+
+1. **Quote**: Server responds with HTTP 402 and a Quote header containing payment routes, unit price, expiry timestamp or a unique nonce.
+
+2. **Authorize**: Client produces a deterministic authorization artifact (such as EVM permit signatures).
+
+3. **Broadcast** (Post-broadcast Flow): Client broadcasts the transaction on-chain. Required for post-broadcast validation flows.
+
+4. **Validate**: Server requires proof of on-chain inclusion before service delivery. While for transaction that haven't yet been broadcasted get checked out against the paymentRequirements.
+
+5. **Settle** (Server-broadcasted Flow): Required only for permit-like payment validation not broadcasted before validation.
+
+Each artifact is self-describing and hash-stable, allowing any component to reconstruct state without trusting a live database.
+
+---
+
+## Protocol Roles
+
+### Client
+
+- Initiates resource requests
+- Processes 402 responses and payment instructions
+- Generates authorization artifacts
+
+### Server
+
+- Issues 402 responses with payment requirements
+- Controls resource access
+- Remains completely stateless
+
+### Facilitator
+
+- Handles transaction verification
+- Manages settlement processes
+- Maintains necessary state
+
+### Wallet
+
+- Executes payment operations
+- Can be user-controlled or autonomous
+- Requires no h402-specific implementation
+
+---
+
+## Design Tenets
+
+### Chain-Plural
+
+- Multiple settlement networks as first-class options
+- Single Quote can expose parallel price routes
+- No vendor lock-in or chain maximalism
+
+### Deterministic
+
+- Every step produces immutable artifacts
+- Self-describing proofs enable stateless verification
+- No hidden session state required (except Facilitator)

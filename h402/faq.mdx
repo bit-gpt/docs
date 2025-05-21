@@ -1,0 +1,139 @@
+---
+title: "FAQ"
+---
+
+## General Questions
+
+<Accordion title="What is h402?">
+  h402 is a thin, header-based payment primitive that integrates directly into
+  HTTP interactions, enabling stateless machine-to-machine payments without
+  centralized billing systems or proprietary APIs.
+</Accordion>
+
+<Accordion title="Why was h402 created?">
+  Thirty-five years after HTTP's creation, the web still lacks a native,
+  programmable unit of value. h402 aims to close this gap by providing a
+  protocol for autonomous systems to negotiate value exchange directly.
+</Accordion>
+
+<Accordion title="How does h402 differ from traditional payment systems?">
+  Unlike traditional systems that rely on credit cards, API keys or custodial
+  services, h402 embeds price discovery and settlement directly in the HTTP
+  request-response cycle, making it ideal for machine-to-machine transactions.
+</Accordion>
+
+## Technical Questions
+
+<Accordion title="Does h402 require a database?">
+  The core protocol is stateless, but the facilitator service requires Redis for operational purposes and uses a database for storing transaction hashes.
+</Accordion>
+
+<Accordion title="Which blockchains are supported?">
+  h402 is chain-plural by design. The facilitator currently supports:
+  - EVM chains (Ethereum, Base, BSC)
+  - Solana mainnet
+  - Future chains will be added through the extensible architecture
+</Accordion>
+
+<Accordion title="What happens if a payment fails?">
+  The protocol includes verification and settlement steps. The facilitator service handles payment verification and settlement, with built-in error handling.
+</Accordion>
+
+## Implementation Questions
+
+<Accordion title="Do I need to modify my existing HTTP service?">
+  No major modifications are needed. h402 works as a thin gateway in front of
+  your service, handling payment negotiation while your core logic remains
+  unchanged.
+</Accordion>
+
+<Accordion title="What's the role of the Facilitator?">
+  The Facilitator is a critical service that:
+  - Verifies payment payloads across supported chains
+  - Handles transaction settlement
+  - Provides health monitoring and backup functionality
+  - Manages chain-specific complexities
+  It requires proper configuration including private keys, RPC endpoints, and Redis for operation.
+</Accordion>
+
+<Accordion title="How do I handle high-volume scenarios?">
+  The facilitator service is designed for production use with:
+  - Redis-backed operations
+  - Automated database backups to S3
+  - Health monitoring endpoints
+  - Docker containerization support
+  - Configurable backup retention and scheduling
+</Accordion>
+
+## Security Questions
+
+<Accordion title="How are payments validated?">
+  Payments are validated through the facilitator's `/verify` endpoint, which checks payment proofs and requirements including:
+  - Token specifications (address, type, decimals)
+  - Amount requirements
+  - Network/chain validation
+  - Payment expiration
+</Accordion>
+
+<Accordion title="Can payments be replayed?">
+  No. The facilitator service validates each payment payload, checking each transaction against the database, additionally there are other protocol built-in security features.
+</Accordion>
+
+<Accordion title="How are API keys and secrets handled?">
+  The facilitator service requires secure configuration through environment variables including:
+  - Private keys for signing
+  - Admin tokens for protected endpoints
+  - S3 credentials for backups
+  - Redis connection details   
+  
+  These should be properly secured in production environments.
+</Accordion>
+
+## Use Cases
+
+<Accordion title="Is h402 suitable for subscription services?">
+  Yes. The payment requirements system supports flexible payment schemes including: `exact` and soon to be introduced `upto`, `prepaid`, `streamed`, `subscription`, `postpaid`.
+</Accordion>
+
+<Accordion title="Can h402 handle micropayments?">
+  Yes, it supports precise payment amounts through:
+  - Token-specific decimal handling
+  - Smallest unit amount formatting
+  - Support for various token types
+  - Chain-specific amount representations
+</Accordion>
+
+<Accordion title="Does h402 work for human users too?">
+  While optimized for machine-to-machine payments, h402 works with any system capable of:
+  - Generating valid payment payloads
+  - Interacting with HTTP APIs
+  - Meeting payment requirements
+  - Processing base64 encoded payloads   
+
+  We do also provide utils for client-side integration and human interactions.
+</Accordion>
+
+## Development & Support
+
+<Accordion title="Where can I find example implementations?">
+  Check our [Integration Examples](/h402/examples) page for real-world usage
+  patterns and the [Quickstart Guide](/h402/quickstart) for basic setup
+  instructions.
+</Accordion>
+
+<Accordion title="Is h402 production-ready?">
+  Yes, the facilitator service is production-ready with:
+  - Docker and docker-compose support
+  - Comprehensive environment configuration
+  - S3-compatible backup system
+  - Health monitoring endpoints
+  - Redis integration for reliability
+</Accordion>
+
+<Accordion title="How can I contribute?">
+  h402 is fully open source. You can:
+  - Contribute to the core protocol
+  - Build integrations and tools
+  - Share implementation feedback
+  - Propose new payment schemes
+</Accordion>

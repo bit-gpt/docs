@@ -1,0 +1,145 @@
+---
+title: "Quickstart Guide"
+sidebarTitle: "Quickstart"
+---
+
+The quickest path to a working h402 integration is a thin gateway that sits in front of your HTTP service. This guide shows how to implement both client and server components using the `@bit-gpt/h402` package.
+
+<Steps>
+  <Step title="Installation">
+    ```bash
+    npm install @bit-gpt/h402
+    ```
+  </Step>
+  <Step title="Server Implementation">
+    Currently we support middlewares for Express and NextJS, but you can create your own middleware using `utils.useFacilitator()` from `@bit-gpt/h402/middleware`
+
+    <CodeGroup>
+    ```typescript Express {3-4, 11-18, 20-24}
+    // app.ts
+    import express from "express";
+    import { h402ExpressMiddleware } from "@bit-gpt/h402/middleware";
+    import { PaymentRequirements } from "@bit-gpt/h402/types";
+
+    const app = express();
+    app.use(express.json());
+
+    // 1. Define payment requirements
+    const paymentRequirements: PaymentRequirements = {
+      namespace: "eip155",
+      tokenAddress: "0xabc123",
+      amountRequired: "10",
+      amountRequiredFormat: "humanReadable",
+      payToAddress: "0xYourWalletAddress",
+      networkId: "1",
+    };
+
+    // 2. Define the resource with h402 middleware
+    app.use(h402ExpressMiddleware({
+      routes: {
+        "/paywalled_route": {
+          paymentRequirements
+        }
+      },
+    }))
+
+    app.listen(3000);
+    ```
+
+    ```typescript NextJS {3-4, 7-15, 17-23}
+    // middleware.ts
+    import express from "express";
+    import { h402NextMiddleware } from "@bit-gpt/h402/middleware";
+    import { PaymentRequirements } from "@bit-gpt/h402/types";
+
+    // 1. Define payment requirements
+    const paymentRequirements: PaymentRequirements = {
+      namespace: "eip155",
+      tokenAddress: "0xabc123",
+      amountRequired: "10",
+      amountRequiredFormat: "humanReadable",
+      payToAddress: "0xYourWalletAddress",
+      networkId: "1",
+    };
+
+    // 2. Define the resource with h402 middleware
+    export const middleware = h402NextMiddleware({
+      routes: {
+        "/paywalled_route": {
+          paymentRequirements
+        }
+      },
+    });
+
+    export const config = {
+      matcher: ["/paywalled_route"]
+    };
+    ```
+
+    </CodeGroup>
+
+  </Step>
+
+<Step title="Client Implementation (Optional – when using custom paywall)">
+
+```typescript React {2, 15-17, 24} [expandable]
+import { useState } from "react";
+import { createPayment } from "@bit-gpt/h402";
+
+// Assuming you have a wallet client (i.e. Wagmi/Viem)
+const walletClient = /* Your wallet instance */;
+
+export function CustomPaywall() {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [data, setData] = useState(null);
+
+  async function handlePayment() {
+    isProcessing(true);
+
+    // 1. Produce header from the quote
+    const paymentHeader = await createPayment(paymentRequirements, {
+      evmClient: walletClient
+    });
+
+    // 2. Call the premium API with the header
+    const response = await fetch("/paywalled_route", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-PAYMENT": paymentHeader,
+      },
+      body: JSON.stringify({}),
+    });
+
+    setData(await response.json());
+    setIsProcessing(false);
+  }
+
+
+  return data ? (
+    <pre>{data}</pre>
+  ) : (
+    <button onClick={handlePayment} disabled={isProcessing}>
+      Pay with h402
+    </button>
+  );
+}
+```
+
+  </Step>
+</Steps>
+
+## Key Points
+
+- The resource server remains completely stateless - all necessary information is encoded in the payment header
+- No hidden session state or database required
+- Payment verification is deterministic and based on cryptographic proofs
+- The same pattern works for any HTTP service, from API endpoints to static files
+- Support for multiple payment networks through the same interface
+
+For production deployments, consider:
+
+- Adding proper error handling
+- Implementing retry logic
+- Setting up monitoring and logging
+- Using a production-grade facilitator (or use ours `https://facilitator.bitgpt.xyz/`)
