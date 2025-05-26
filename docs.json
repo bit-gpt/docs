@@ -13,26 +13,41 @@
       "dark": "#131316"
     }
   },
-  "favicon": "/favicon.svg",
-  "navbar": {
-    "primary": {
-      "type": "button",
-      "label": "Email Us",
-      "href": "mailto:support@bitgpt.xyz"
+  "favicon": "/images/favicon.svg",
+  "seo": {
+    "metatags": {
+      "og:image": "/images/og.png",
+      "og:title": "BitGPT Docs",
+      "og:description": "BitGPT is a platform for building and deploying AI agents on Bitcoin.",
+      "twitter:title": "BitGPT Docs",
+      "twitter:description": "BitGPT is a platform for building and deploying AI agents on Bitcoin.",
+      "twitter:image": "/images/og.png"
     }
   },
   "navigation": {
-    "tabs": [
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Email Us",
+          "icon": "envelope",
+          "href": "mailto:hello@bitgpt.xyz"
+        },
+        {
+          "anchor": "Discord",
+          "icon": "discord",
+          "href": "https://discord.gg/5XXBz5S2qe"
+        }
+      ]
+    },
+    "groups": [
       {
-        "tab": "Home",
-        "icon": "house",
+        "group": "🏠 Home",
         "pages": ["home/welcome", "home/about"]
       },
       {
-        "tab": "h402 Protocol",
-        "icon": "bitcoin",
+        "group": "💸 h402 Protocol",
         "pages": [
-          "h402/welcome",
+          "h402/introduction",
           "h402/core",
           "h402/quickstart",
           "h402/examples",
@@ -42,15 +57,14 @@
         ]
       },
       {
-        "tab": "Platform API",
-        "icon": "server",
-        "pages": ["platform-api/welcome"]
+        "group": "⚙️ Platform API",
+        "pages": ["platform-api/introduction"]
       }
     ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/logo/light.svg",
+    "dark": "/images/logo/dark.svg"
   },
   "footer": {
     "socials": {
